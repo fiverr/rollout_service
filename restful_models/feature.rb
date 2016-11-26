@@ -1,4 +1,4 @@
-class FeatureEntity < Grape::Entity
+class Feature < Grape::Entity
   expose :name
   expose :percentage
   expose :users

@@ -3,7 +3,7 @@ Bundler.require
 
 require_rel 'models'
 require_rel 'lib'
-require_rel 'api_entities'
+require_rel 'restful_models'
 require_rel 'api'
 require_rel 'rollout_service'
 

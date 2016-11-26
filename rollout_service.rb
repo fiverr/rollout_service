@@ -9,6 +9,7 @@ module RolloutService
 
 
     group(:feature) { mount FeatureAPI}
+    group(:group) { mount GroupAPI}
 
       # get :public_timeline do
     #   mount Twitter::APIv1

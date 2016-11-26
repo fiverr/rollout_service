@@ -4,14 +4,15 @@ class FeatureAPI < Grape::API
     features = $rollout.features
     features.map! do|feature|
       feature = $rollout.get(feature)
-      FeatureEntity.represent(feature)
+      Feature.represent(feature)
     end
     Response.new(features)
   end
 
   get '/:feature' do
-    feature = $rollout.get(:feature)
-    feature = FeatureEntity.represent(feature)
+    feature = params[:feature]
+    feature = $rollout.get(feature)
+    feature = Feature.represent(feature)
     Response.new(feature)
   end
 
@@ -20,6 +21,6 @@ class FeatureAPI < Grape::API
     percentage = params[:percentage] || 0
     $rollout.activate_percentage(feature_name, percentage)
     $rollout.set_feature_data(feature_name,  params[:meta_data])
-    {}
+    Response.new({},'Feature created successfully!')
   end
 end
