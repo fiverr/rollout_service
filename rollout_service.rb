@@ -8,7 +8,10 @@ module RolloutService
     prefix :api
 
 
-    group(:feature) { mount FeatureAPI}
+    group('feature/:feature_name') {
+      group(:script) { mount ScriptAPI }
+      mount FeatureAPI
+    }
     group(:group) { mount GroupAPI}
 
       # get :public_timeline do

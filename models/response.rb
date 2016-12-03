@@ -1,11 +1,14 @@
 class Response
-   attr_accessor :data
 
-   def initialize(data)
-       @data = data
+   def initialize(data = {}, message = '')
+    @message = message
+    @data = data
    end
 
    def to_s
-       {data: self.data}.to_json
+     response = {}
+     response[:data] = @data if @data.present?
+     response[:message] = @message if @message.present?
+     response.to_json
    end
 end
