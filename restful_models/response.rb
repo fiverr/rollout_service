@@ -1,4 +1,4 @@
 class Response < Grape::Entity
-   expose :data
-   expose :message, unless:{ message: nil}
+   expose :data, unless: { data: 'nil' }
+   expose :message, unless:{ message: 'nil' }
 end
