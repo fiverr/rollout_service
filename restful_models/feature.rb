@@ -3,7 +3,5 @@ class Feature < Grape::Entity
   expose :percentage
   expose :users
   expose :groups
-  expose :data, as: :meta_data do |key|
-  key
-  end
+  expose :data, as: :meta_data
 end

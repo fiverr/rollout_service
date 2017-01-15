@@ -1,6 +1,3 @@
-$redis   = Redis.new
-$rollout = Rollout.new($redis)
-
 module RolloutService
   class API < Grape::API
     version 'v1'
@@ -8,10 +5,7 @@ module RolloutService
     prefix :api
 
 
-    group('feature/:feature_name') {
-      group(:script) { mount ScriptAPI }
-      mount FeatureAPI
-    }
+    group(:feature) { mount FeatureAPI }
     group(:group) { mount GroupAPI}
 
       # get :public_timeline do
