@@ -6,6 +6,7 @@ Globals.setup
 
 # require_rel 'models'
 require_rel 'restful_models'
+require_rel 'models'
 require_rel 'api'
 require_rel 'rollout_service'
 
