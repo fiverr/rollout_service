@@ -1,9 +1,11 @@
 require 'active_model'
 
 class Feature
+  extend ActiveModel::Callbacks
   include ActiveModel::Model
   include ActiveModel::Validations
-  include ActiveModel::AttributeAssignment
+
+  MAX_HISTORY_RECORDS = 50
 
   validates :name,
             :description,
@@ -13,7 +15,6 @@ class Feature
             :created_by,
             presence: true
 
-  validates :dogfood, inclusion: {in: [true, false]}
   validate :validate
 
   attr_accessor :history,
@@ -44,7 +45,9 @@ class Feature
   end
 
   def save!
+    self.set_history_attribute
     Throw 'Feature is not valid!' unless self.valid?
+
     $rollout.activate_percentage(self.name, self.percentage)
 
     feature_data = {
@@ -76,6 +79,17 @@ class Feature
     self.members ||= []
     self.dogfood ||= false
     self.percentage ||= 0
+  end
+
+  def set_history_attribute
+    self.history << {
+        author: self.author,
+        percentage: self.percentage,
+        dogfood: self.dogfood,
+        members: self.members,
+        updated_at: Time.current
+    }
+    self.history = self.history.last(MAX_HISTORY_RECORDS)
   end
 
   private
