@@ -66,7 +66,7 @@ class FeatureAPI < Grape::API
         updated_at: Time.current
     }
 
-    feature_data[:history] = history << feature_data.merge({user: author})
+    feature_data[:history] = (history << feature_data.merge({user: author})).last(50)
     feature_data.delete_if { |_, value| value.blank? }
 
     # new rollout
