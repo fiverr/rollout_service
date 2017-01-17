@@ -66,7 +66,7 @@ class Feature
 
   def active?(user_id:,remote_ip: nil)
     return true if $rollout.active?(self.name, user_id)
-    return true if remote_ip.present? && $white_list_ips.include?(remote_ip)
+    return true if self.dogfood && remote_ip.present? && $white_list_ips.include?(remote_ip)
     self.members.include?(user_id)
   end
 

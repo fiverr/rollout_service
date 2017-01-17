@@ -53,7 +53,7 @@ class FeatureAPI < Grape::API
       options = {
           name: params[:name],
           percentage: params.fetch(:percentage) || 0,
-          dogfood:  params.fetch(:dogfood),
+          dogfood:  params.fetch(:dogfood) == 'true',
           description:  params[:description],
           members:  params[:members],
           author: params[:author],
@@ -81,7 +81,7 @@ class FeatureAPI < Grape::API
 
       options = {
           percentage: params[:percentage],
-          dogfood:  params[:dogfood],
+          dogfood:  params[:dogfood] == 'true',
           description:  params[:description],
           members:  params[:members],
           author: params[:author]
