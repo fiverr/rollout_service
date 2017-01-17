@@ -4,7 +4,7 @@ module RolloutService
     format :json
     prefix :api
 
-    group(:feature) { mount FeatureAPI }
+    resource(:features) { mount FeatureAPI }
 
   end
 end

@@ -64,8 +64,9 @@ class Feature
     $rollout.set_feature_data(self.name, feature_data)
   end
 
-  def active?(user_id)
+  def active?(user_id:,remote_ip: nil)
     return true if $rollout.active?(self.name, user_id)
+    return true if remote_ip.present? && $white_list_ips.include?(remote_ip)
     self.members.include?(user_id)
   end
 
@@ -90,6 +91,11 @@ class Feature
         updated_at: Time.current
     }
     self.history = self.history.last(MAX_HISTORY_RECORDS)
+  end
+
+  def assign_attributes(options = {})
+    options.delete_if { |_, value| value.blank? }
+    super(options)
   end
 
   private

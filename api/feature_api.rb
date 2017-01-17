@@ -11,98 +11,91 @@ class FeatureAPI < Grape::API
     RestfulModels::Response.represent(data: features)
   end
 
-  get '/:feature_name' do
-    feature_name = params[:feature_name]
-    feature = Feature.find(feature_name)
-    if feature.valid?
-      RestfulModels::Response.represent(data: RestfulModels::Feature.represent(feature))
-    else
-      RestfulModels::Response.represent(message: 'Error, feature is not valid')
-    end
-  end
+  route_param :name do
 
-  params do
-    requires :user_id, type: Integer, desc: 'The user ID'
-  end
-  get '/:feature_name/active/:user_id' do
-    feature_name = params[:feature_name]
-    user_id = params[:user_id].to_i
-    feature = Feature.find(feature_name)
-    active = feature.active?(user_id)
-    RestfulModels::Response.represent(data: {active: active})
-  end
-
-
-  delete '/:feature_name' do
-    feature_name = params[:feature_name]
-    feature = Feature.find(feature_name)
-    feature.delete
-    RestfulModels::Response.represent(message: 'The feature has been removed.')
-  end
-
-
-  params do
-    requires :description, type: String, desc: 'The feature description'
-    requires :author, type: String, desc: 'The author name'
-  end
-  post '/:feature_name' do
-    author = params[:author]
-    options = {
-        name: params[:feature_name],
-        percentage: params.fetch(:percentage),
-        dogfood:  params.fetch(:dogfood),
-        description:  params[:description],
-        members:  params[:members],
-        author: author
-    }
-
-    options.merge!({
-       created_at: Time.current,
-       created_by: author
-    })
-
-    options.delete_if { |_, value| value.blank? }
-
-    feature = Feature.new(options)
-
-    begin
-      feature.save!
-      RestfulModels::Response.represent(message: 'Feature created successfully!')
-    rescue Exception
-      RestfulModels::Response.represent(message: 'An error has been accord')
+    get '/' do
+      feature_name = params[:name]
+      feature = Feature.find(feature_name)
+      if feature.valid?
+        RestfulModels::Response.represent(data: RestfulModels::Feature.represent(feature))
+      else
+        status 500
+        RestfulModels::Response.represent(message: 'Error, feature is not valid')
+      end
     end
 
-  end
+    params do
+      requires :user_id, type: Integer, desc: 'The user ID'
+    end
+    get '/:user_id/active' do
+      feature_name = params[:name]
+      user_id = params[:user_id].to_i
+      remote_ip = params[:remote_ip]
 
-  params do
-    requires :description, type: String, desc: 'The feature description'
-    requires :author, type: String, desc: 'The author name'
-  end
-  put '/:feature_name' do
-    feature_name = params[:feature_name]
-    feature = Feature.find(feature_name)
+      feature = Feature.find(feature_name)
+      active = feature.active?(user_id: user_id, remote_ip: remote_ip)
 
-    author = params[:author]
-    options = {
-        name: params[:feature_name],
-        percentage: params[:percentage],
-        dogfood:  params[:dogfood],
-        description:  params[:description],
-        members:  params[:members],
-        author: author
-    }
-
-    options.delete_if { |_, value| value.blank? }
-
-    feature.assign_attributes(**options)
-
-    begin
-      feature.save!
-      RestfulModels::Response.represent(message: 'Feature updated successfully!')
-    rescue Exception
-      RestfulModels::Response.represent(message: 'An error has been accord')
+      RestfulModels::Response.represent(data: { active: active })
     end
 
-  end
+    delete '/' do
+      feature_name = params[:name]
+      feature = Feature.find(feature_name)
+      feature.delete
+      RestfulModels::Response.represent(message: 'The feature has been removed.')
+    end
 
+    params do
+      requires :description, type: String, desc: 'The feature description'
+      requires :author, type: String, desc: 'The author name'
+    end
+    post '/' do
+      options = {
+          name: params[:name],
+          percentage: params.fetch(:percentage) || 0,
+          dogfood:  params.fetch(:dogfood),
+          description:  params[:description],
+          members:  params[:members],
+          author: params[:author],
+          created_at: Time.current,
+          created_by: params[:author]
+      }
+
+      feature = Feature.new(options)
+
+      begin
+        feature.save!
+        RestfulModels::Response.represent(message: 'Feature created successfully!')
+      rescue Exception
+        status 500
+        RestfulModels::Response.represent(message: 'An error has been accord')
+      end
+    end
+
+    params do
+      requires :author, type: String, desc: 'The author name'
+    end
+    patch '/' do
+      name = params[:name]
+      feature = Feature.find(name)
+
+      options = {
+          percentage: params[:percentage],
+          dogfood:  params[:dogfood],
+          description:  params[:description],
+          members:  params[:members],
+          author: params[:author]
+      }
+
+      feature.assign_attributes(options)
+
+      begin
+        feature.save!
+        RestfulModels::Response.represent(message: 'Feature updated successfully!')
+      rescue Exception
+        status 500
+        RestfulModels::Response.represent(message: 'An error has been accord')
+      end
+    end
+  end
 end

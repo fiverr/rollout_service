@@ -2,13 +2,15 @@
 module Globals
   extend self
 
-
   def environment
     $env = ENV['RACK_ENV'] || 'development'
   end
 
   def redis
-    config = YAML.load_file(File.join('./config/redis.yml'))['environments'][$env]
+    config =  {
+        host: ENV['redis-host'] || '127.0.0.1',
+        port: ENV['redis-post'] || 6379
+    }
     $redis = Redis.new(config)
   end
 
@@ -16,10 +18,15 @@ module Globals
     $rollout = Rollout.new($redis)
   end
 
+  def white_list_ips
+    $white_list_ips = YAML.load(File.open('./config/white_list_ips.yml'))[$env] || []
+  end
+
   def setup
     environment
     redis
     rollout
+    white_list_ips
   end
 end
 
