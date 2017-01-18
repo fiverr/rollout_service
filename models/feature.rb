@@ -22,7 +22,7 @@ class Feature
                 :percentage,
                 :dogfood,
                 :author,
-                :members,
+                :users,
                 :name,
                 :created_at,
                 :created_by
@@ -41,7 +41,8 @@ class Feature
 
     feature_data.merge!({
      name: feature.name,
-     percentage: feature.percentage
+     percentage: feature.percentage,
+     users: feature.users
     })
     self.new(feature_data)
   end
@@ -61,7 +62,6 @@ class Feature
         description: self.description,
         dogfood: self.dogfood,
         author: self.author,
-        members: self.members,
         created_at: self.created_at,
         created_by: self.created_by,
     }
@@ -70,10 +70,8 @@ class Feature
     $rollout.set_feature_data(self.name, feature_data)
   end
 
-  def active?(user_id:,remote_ip: nil)
-    return true if $rollout.active?(self.name, user_id)
-    return true if self.dogfood && remote_ip.present? && $white_list_ips.include?(remote_ip)
-    self.members.include?(user_id)
+  def active?(user_id)
+    $rollout.active?(self.name, user_id)
   end
 
   def delete
@@ -83,7 +81,7 @@ class Feature
 
   def set_default_values
     self.history ||= []
-    self.members ||= []
+    self.users ||= []
     self.dogfood ||= false
     self.percentage ||= 0
   end
@@ -93,7 +91,7 @@ class Feature
         author: self.author,
         percentage: self.percentage,
         dogfood: self.dogfood,
-        members: self.members,
+        users: self.users,
         updated_at: Time.current
     }
     self.history = self.history.last(MAX_HISTORY_RECORDS)
@@ -114,7 +112,7 @@ class Feature
   def validate_data_types
     self.percentage.is_a?(Numeric) &&
         %w(true false).include?(self.dogfood.to_s) &&
-        self.members.is_a?(Array) &&
+        self.users.is_a?(Array) &&
         self.history.is_a?(Array)
   end
 end

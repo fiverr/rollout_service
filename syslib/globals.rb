@@ -1,4 +1,3 @@
-
 module Globals
   extend self
 

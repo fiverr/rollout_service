@@ -6,7 +6,7 @@ module RestfulModels
     expose :description
     expose :dogfood
     expose :author
-    expose :members
+    expose :users
     expose :created_at
     expose :created_by
   end

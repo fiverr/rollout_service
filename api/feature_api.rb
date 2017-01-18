@@ -19,6 +19,24 @@ class FeatureAPI < Grape::API
   end
 
   route_param :name do
+    route_param :user_id do
+      post '/' do
+        feature_exist!
+        feature_name = params[:name]
+        user_id = params[:user_id]
+        response = $rollout.activate_user(feature_name,user_id)
+        RestfulModels::Response.represent(message: response)
+      end
+
+      delete '/' do
+        feature_exist!
+        feature_name = params[:name]
+        user_id = params[:user_id]
+        response = $rollout.deactivate_user(feature_name,user_id)
+        RestfulModels::Response.represent(message: response)
+      end
+    end
+
     get '/' do
       feature_exist!
 
@@ -42,12 +60,11 @@ class FeatureAPI < Grape::API
 
       feature_name = params[:name]
       user_id = params[:user_id].to_i
-      remote_ip = params[:remote_ip]
 
       feature = Feature.find(feature_name)
       error!(status: 404, error: 'Feature not found') if feature.nil?
 
-      active = feature.active?(user_id: user_id, remote_ip: remote_ip)
+      active = feature.active?(user_id: user_id)
 
       RestfulModels::Response.represent(data: { active: active })
     end
@@ -73,7 +90,6 @@ class FeatureAPI < Grape::API
           percentage: params[:percentage] || 0,
           dogfood:  params[:dogfood] == 'true',
           description:  params[:description],
-          members:  params[:members],
           author: params[:author],
           created_at: Time.current,
           created_by: params[:author]
@@ -104,7 +120,6 @@ class FeatureAPI < Grape::API
           percentage: params[:percentage],
           dogfood:  params[:dogfood] == 'true',
           description:  params[:description],
-          members:  params[:members],
           author: params[:author]
       }
 
