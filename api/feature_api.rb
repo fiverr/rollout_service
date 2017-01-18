@@ -1,10 +1,17 @@
 class FeatureAPI < Grape::API
 
+  helpers do
+    def feature_exist!
+      feature_name = params[:name]
+      error!('401 Unauthorized', 401) if feature_name.nil? || !Feature.exist?(feature_name)
+    end
+  end
+
   get '/' do
     features = $rollout.features
     features.map! do|feature|
       feature = Feature.find(feature)
-      feature.valid? ?  RestfulModels::Feature.represent(feature) : nil
+      (feature.present? && feature.valid?) ? RestfulModels::Feature.represent(feature) : nil
     end
 
     features = features.compact
@@ -12,10 +19,13 @@ class FeatureAPI < Grape::API
   end
 
   route_param :name do
-
     get '/' do
+      feature_exist!
+
       feature_name = params[:name]
       feature = Feature.find(feature_name)
+      error!(status: 404, error: 'Feature not found') if feature.nil?
+
       if feature.valid?
         RestfulModels::Response.represent(data: RestfulModels::Feature.represent(feature))
       else
@@ -28,19 +38,27 @@ class FeatureAPI < Grape::API
       requires :user_id, type: Integer, desc: 'The user ID'
     end
     get '/:user_id/active' do
+      feature_exist!
+
       feature_name = params[:name]
       user_id = params[:user_id].to_i
       remote_ip = params[:remote_ip]
 
       feature = Feature.find(feature_name)
+      error!(status: 404, error: 'Feature not found') if feature.nil?
+
       active = feature.active?(user_id: user_id, remote_ip: remote_ip)
 
       RestfulModels::Response.represent(data: { active: active })
     end
 
     delete '/' do
+      feature_exist!
+
       feature_name = params[:name]
       feature = Feature.find(feature_name)
+      error!(status: 404, error: 'Feature not found') if feature.nil?
+
       feature.delete
       RestfulModels::Response.represent(message: 'The feature has been removed.')
     end
@@ -76,8 +94,11 @@ class FeatureAPI < Grape::API
       requires :author, type: String, desc: 'The author name'
     end
     patch '/' do
+      feature_exist!
+
       name = params[:name]
       feature = Feature.find(name)
+      error!(status: 404, error: 'Feature not found') if feature.nil?
 
       options = {
           percentage: params[:percentage],

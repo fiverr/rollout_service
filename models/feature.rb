@@ -33,6 +33,8 @@ class Feature
   end
 
   def self.find(name)
+    return nil unless exist?(name)
+
     feature = $rollout.get(name)
     feature_data = feature.data.symbolize_keys!
     feature_data.delete_if {|key, _| !self.method_defined?(key)}
@@ -42,6 +44,10 @@ class Feature
      percentage: feature.percentage
     })
     self.new(feature_data)
+  end
+
+  def self.exist?(name)
+    $rollout.features.include?(name.to_sym)
   end
 
   def save!
@@ -98,6 +104,7 @@ class Feature
     super(options)
   end
 
+
   private
 
   def validate
@@ -110,5 +117,4 @@ class Feature
         self.members.is_a?(Array) &&
         self.history.is_a?(Array)
   end
-
 end
