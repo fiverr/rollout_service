@@ -8,8 +8,8 @@ module Globals
 
   def redis
     config =  {
-        host: ENV['redis-host'] || '127.0.0.1',
-        port: ENV['redis-post'] || 6379
+        host: ENV['redis_host'] || '127.0.0.1',
+        port: ENV['redis_post'] || 6379
     }
     $redis = Redis.new(config)
   end
