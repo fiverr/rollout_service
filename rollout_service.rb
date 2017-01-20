@@ -5,6 +5,7 @@ module RolloutService
     prefix :api
 
     resource(:features) { mount FeatureAPI }
+    resource(:groups) { mount GroupAPI }
 
   end
 end
