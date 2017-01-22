@@ -96,7 +96,6 @@ class Feature
     self.history << {
         author: self.author,
         percentage: self.percentage,
-        users: self.users,
         updated_at: Time.current
     }
     self.history = self.history.last(MAX_HISTORY_RECORDS)
