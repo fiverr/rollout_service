@@ -20,7 +20,6 @@ class Feature
   attr_accessor :history,
                 :description,
                 :percentage,
-                :dogfood,
                 :author,
                 :users,
                 :name,
@@ -48,7 +47,8 @@ class Feature
   end
 
   def self.exist?(name)
-    $rollout.features.include?(name.to_sym)
+    @features ||= $rollout.features
+    @features.include?(name.to_sym)
   end
 
   def save!
@@ -60,7 +60,6 @@ class Feature
     feature_data = {
         history: self.history,
         description: self.description,
-        dogfood: self.dogfood,
         author: self.author,
         created_at: self.created_at,
         created_by: self.created_by,
@@ -79,10 +78,17 @@ class Feature
     $rollout.delete(self.name)
   end
 
+  def add_user(user_id)
+    $rollout.activate_user(self.name, user_id)
+  end
+
+  def remove_user(user_id)
+    $rollout.deactivate_user(self.name, user_id)
+  end
+
   def set_default_values
     self.history ||= []
     self.users ||= []
-    self.dogfood ||= false
     self.percentage ||= 0
   end
 
@@ -90,7 +96,6 @@ class Feature
     self.history << {
         author: self.author,
         percentage: self.percentage,
-        dogfood: self.dogfood,
         users: self.users,
         updated_at: Time.current
     }
@@ -111,7 +116,6 @@ class Feature
 
   def validate_data_types
     self.percentage.is_a?(Numeric) &&
-        %w(true false).include?(self.dogfood.to_s) &&
         self.users.is_a?(Array) &&
         self.history.is_a?(Array)
   end

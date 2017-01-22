@@ -4,7 +4,6 @@ module RestfulModels
     expose :percentage ,unless: Proc.new {|field| field.nil?}
     expose :history ,unless: Proc.new {|field| field.nil?}
     expose :description ,unless: Proc.new {|field| field.nil?}
-    expose :dogfood ,unless: Proc.new {|field| field.nil?}
     expose :author ,unless: Proc.new {|field| field.nil?}
     expose :users ,unless: Proc.new {|field| field.nil?}
     expose :created_at ,unless: Proc.new {|field| field.nil?}

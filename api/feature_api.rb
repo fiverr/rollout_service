@@ -3,7 +3,14 @@ class FeatureAPI < Grape::API
   helpers do
     def feature_exist!
       feature_name = params[:name]
-      error!('401 Unauthorized', 401) if feature_name.nil? || !Feature.exist?(feature_name)
+      error!('Resource not found.', 404) if feature_name.nil? || !Feature.exist?(feature_name)
+    end
+
+    def current_feature
+      feature_name = params[:name]
+      return nil if feature_name.nil?
+
+      Feature.find(feature_name)
     end
   end
 
@@ -18,30 +25,36 @@ class FeatureAPI < Grape::API
   end
 
   route_param :name do
+
+    params do
+      requires :user_id, type: Integer, desc: 'The user ID'
+    end
     route_param :user_id do
       post '/' do
         feature_exist!
-        feature_name = params[:name]
+        feature = current_feature
+
         user_id = params[:user_id]
-        response = $rollout.activate_user(feature_name,user_id)
+        response = feature.add_user(user_id)
+
         RestfulModels::Response.represent(message: response)
       end
 
       delete '/' do
         feature_exist!
-        feature_name = params[:name]
         user_id = params[:user_id]
-        response = $rollout.deactivate_user(feature_name,user_id)
+        feature = current_feature
+
+        response = feature.remove_user(user_id)
+
+        status 200
         RestfulModels::Response.represent(message: response)
       end
     end
 
     get '/' do
       feature_exist!
-
-      feature_name = params[:name]
-      feature = Feature.find(feature_name)
-      error!(status: 404, error: 'Feature not found') if feature.nil?
+      feature = current_feature
 
       if feature.valid?
         RestfulModels::Response.represent(data: RestfulModels::Feature.represent(feature))
@@ -57,11 +70,8 @@ class FeatureAPI < Grape::API
     get '/:user_id/active' do
       feature_exist!
 
-      feature_name = params[:name]
       user_id = params[:user_id].to_i
-
-      feature = Feature.find(feature_name)
-      error!(status: 404, error: 'Feature not found') if feature.nil?
+      feature = current_feature
 
       active = feature.active?(user_id: user_id)
 
@@ -70,10 +80,7 @@ class FeatureAPI < Grape::API
 
     delete '/' do
       feature_exist!
-
-      feature_name = params[:name]
-      feature = Feature.find(feature_name)
-      error!(status: 404, error: 'Feature not found') if feature.nil?
+      feature = current_feature
 
       feature.delete
       RestfulModels::Response.represent(message: 'The feature has been removed.')
@@ -87,7 +94,6 @@ class FeatureAPI < Grape::API
       options = {
           name: params[:name],
           percentage: params[:percentage] || 0,
-          dogfood:  params[:dogfood] == 'true',
           description:  params[:description],
           author: params[:author],
           created_at: Time.current,
@@ -110,14 +116,10 @@ class FeatureAPI < Grape::API
     end
     patch '/' do
       feature_exist!
-
-      name = params[:name]
-      feature = Feature.find(name)
-      error!(status: 404, error: 'Feature not found') if feature.nil?
+      feature = current_feature
 
       options = {
           percentage: params[:percentage],
-          dogfood:  params[:dogfood] == 'true',
           description:  params[:description],
           author: params[:author]
       }
