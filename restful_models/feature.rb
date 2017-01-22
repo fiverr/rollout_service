@@ -1,14 +1,14 @@
 module RestfulModels
   class Feature < Grape::Entity
-    expose :name
-    expose :percentage
-    expose :history
-    expose :description
-    expose :dogfood
-    expose :author
-    expose :users
-    expose :created_at
-    expose :created_by
+    expose :name ,unless: Proc.new {|field| field.nil?}
+    expose :percentage ,unless: Proc.new {|field| field.nil?}
+    expose :history ,unless: Proc.new {|field| field.nil?}
+    expose :description ,unless: Proc.new {|field| field.nil?}
+    expose :dogfood ,unless: Proc.new {|field| field.nil?}
+    expose :author ,unless: Proc.new {|field| field.nil?}
+    expose :users ,unless: Proc.new {|field| field.nil?}
+    expose :created_at ,unless: Proc.new {|field| field.nil?}
+    expose :created_by ,unless: Proc.new {|field| field.nil?}
   end
 end
 

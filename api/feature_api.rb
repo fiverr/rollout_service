@@ -11,10 +11,9 @@ class FeatureAPI < Grape::API
     features = $rollout.features
     features.map! do|feature|
       feature = Feature.find(feature)
-      (feature.present? && feature.valid?) ? RestfulModels::Feature.represent(feature) : nil
+      RestfulModels::Feature.represent(feature)
     end
 
-    features = features.compact
     RestfulModels::Response.represent(data: features)
   end
 
