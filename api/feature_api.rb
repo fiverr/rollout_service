@@ -1,19 +1,5 @@
 class FeatureAPI < Grape::API
 
-  helpers do
-    def feature_exist!
-      feature_name = params[:name]
-      error!('Resource not found.', 404) if feature_name.nil? || !Feature.exist?(feature_name)
-    end
-
-    def current_feature
-      feature_name = params[:name]
-      return nil if feature_name.nil?
-
-      Feature.find(feature_name)
-    end
-  end
-
   get '/' do
     features = $rollout.features
     features.map! do|feature|
@@ -24,37 +10,14 @@ class FeatureAPI < Grape::API
     RestfulModels::Response.represent(data: features)
   end
 
-  route_param :name do
+
+  route_param :feature_name do
 
     params do
-      requires :user_id, type: Integer, desc: 'The user ID'
+      requires :feature_name, type: Feature
     end
-    route_param :user_id do
-      post '/' do
-        feature_exist!
-        feature = current_feature
-
-        user_id = params[:user_id]
-        response = feature.add_user(user_id)
-
-        RestfulModels::Response.represent(message: response)
-      end
-
-      delete '/' do
-        feature_exist!
-        user_id = params[:user_id]
-        feature = current_feature
-
-        response = feature.remove_user(user_id)
-
-        status 200
-        RestfulModels::Response.represent(message: response)
-      end
-    end
-
     get '/' do
-      feature_exist!
-      feature = current_feature
+      feature = params[:feature_name]
 
       if feature.valid?
         RestfulModels::Response.represent(data: RestfulModels::Feature.represent(feature))
@@ -66,12 +29,11 @@ class FeatureAPI < Grape::API
 
     params do
       requires :user_id, type: Integer, desc: 'The user ID'
+      requires :feature_name, type: Feature
     end
     get '/:user_id/active' do
-      feature_exist!
-
       user_id = params[:user_id].to_i
-      feature = current_feature
+      feature = params[:feature_name]
 
       active = feature.active?(user_id: user_id)
 
@@ -79,9 +41,7 @@ class FeatureAPI < Grape::API
     end
 
     delete '/' do
-      feature_exist!
-      feature = current_feature
-
+      feature = params[:feature_name]
       feature.delete
       RestfulModels::Response.represent(message: 'The feature has been removed.')
     end
@@ -89,13 +49,19 @@ class FeatureAPI < Grape::API
     params do
       requires :description, type: String, desc: 'The feature description'
       requires :author, type: String, desc: 'The author name'
+      requires :author_mail, type: String, desc: 'The author mail'
+      requires :feature_name, type: String
     end
     post '/' do
+      feature_name = params[:feature_name]
+      error! 'Feature is already exist!' if Feature.exist?(feature_name)
+
       options = {
-          name: params[:name],
+          name: feature_name,
           percentage: params[:percentage] || 0,
           description:  params[:description],
           author: params[:author],
+          author_mail: params[:author_mail],
           created_at: Time.current,
           created_by: params[:author]
       }
@@ -104,34 +70,37 @@ class FeatureAPI < Grape::API
 
       begin
         feature.save!
+        Feature.set_users_to_feature(feature, params[:users])
         RestfulModels::Response.represent(message: 'Feature created successfully!')
-      rescue Exception
+      rescue => e
         status 500
-        RestfulModels::Response.represent(message: 'An error has been accord')
+        RestfulModels::Response.represent(message: "An error has been occurred.\r\n #{e}")
       end
     end
 
     params do
       requires :author, type: String, desc: 'The author name'
+      requires :feature_name, type: Feature
     end
     patch '/' do
-      feature_exist!
-      feature = current_feature
+      feature = params[:feature_name]
 
       options = {
           percentage: params[:percentage],
           description:  params[:description],
-          author: params[:author]
+          author: params[:author],
+          author_mail: params[:author_mail]
       }
 
       feature.assign_attributes(options)
 
       begin
         feature.save!
+        Feature.set_users_to_feature(feature, params[:users])
         RestfulModels::Response.represent(message: 'Feature updated successfully!')
-      rescue Exception
+      rescue => e
         status 500
-        RestfulModels::Response.represent(message: 'An error has been accord')
+        RestfulModels::Response.represent(message: "An error has been occurred.\r\n #{e}")
       end
     end
   end

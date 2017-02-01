@@ -14,18 +14,13 @@ module Globals
   end
 
   def rollout
-    $rollout = Rollout.new($redis)
-  end
-
-  def white_list_ips
-    $white_list_ips = YAML.load(File.open('./config/white_list_ips.yml'))[$env] || []
+    $rollout = Rollout.new($redis, use_sets: true)
   end
 
   def setup
     environment
     redis
     rollout
-    white_list_ips
   end
 end
 
