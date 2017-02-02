@@ -58,7 +58,7 @@ class FeatureAPI < Grape::API
 
       options = {
           name: feature_name,
-          percentage: params[:percentage] || 0,
+          percentage: params[:percentage].to_i,
           description:  params[:description],
           author: params[:author],
           author_mail: params[:author_mail],
@@ -86,7 +86,7 @@ class FeatureAPI < Grape::API
       feature = params[:feature_name]
 
       options = {
-          percentage: params[:percentage],
+          percentage: params[:percentage].to_i,
           description:  params[:description],
           author: params[:author],
           author_mail: params[:author_mail]
