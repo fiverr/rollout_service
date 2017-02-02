@@ -8,5 +8,5 @@ group :default do
   gem 'redis'
   gem 'require_all'
   gem 'activesupport', '~> 5.0'
-  gem 'activemodel', '~> 5.0'
+  gem 'active_attr', '~> 0.9.0'
 end

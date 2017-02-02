@@ -1,11 +1,20 @@
-require 'active_model'
+require 'active_attr'
 
 class Feature
-  extend ActiveModel::Callbacks
-  include ActiveModel::Model
-  include ActiveModel::Validations
+  include ActiveAttr::Model
 
   MAX_HISTORY_RECORDS = 50
+
+  attribute :name, type: String
+  attribute :description, type: String
+  attribute :percentage, type: Integer, default: 0
+  attribute :author, type: String
+  attribute :author_mail, type: String
+  attribute :created_at, type: Date
+  attribute :created_by, type: String
+  attribute :created_by, type: String
+  attribute :history, default: []
+  attribute :users, default: []
 
   validates :name,
             :description,
@@ -15,23 +24,6 @@ class Feature
             :created_at,
             :created_by,
             presence: true
-
-  validate :validate
-
-  attr_accessor :history,
-                :description,
-                :percentage,
-                :author,
-                :users,
-                :author_mail,
-                :name,
-                :created_at,
-                :created_by
-
-  def initialize(attributes)
-    super(attributes)
-    set_default_values
-  end
 
   def self.parse(name)
       instance = find(name)
@@ -89,8 +81,6 @@ class Feature
     $rollout.set_feature_data(self.name, feature_data)
   end
 
-
-
   def active?(user_id)
     $rollout.active?(self.name, user_id)
   end
@@ -99,38 +89,7 @@ class Feature
     $rollout.delete(self.name)
   end
 
-  def add_user(user_id)
-    $rollout.activate_user(self.name, user_id)
-  end
-
-  def remove_user(user_id)
-    $rollout.deactivate_user(self.name, user_id)
-  end
-
-  def assign_attributes(options = {})
-    return nil unless options.is_a?(Hash)
-
-    options.delete_if { |_, value| value.blank? }
-    super(options)
-  end
-
   private
-
-  def set_default_values
-    self.history ||= []
-    self.users ||= []
-    self.percentage ||= 0
-  end
-
-  def validate
-    errors.add(:base, 'Wrong data type') unless validate_data_types
-  end
-
-  def validate_data_types
-    self.percentage.is_a?(Numeric) &&
-        self.users.is_a?(Array) &&
-        self.history.is_a?(Array)
-  end
 
   def set_history_attribute
     self.history << {
