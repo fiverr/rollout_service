@@ -8,8 +8,8 @@ class Feature
   attribute :name, type: String
   attribute :description, type: String
   attribute :percentage, type: Integer, default: 0
-  attribute :author, type: String
-  attribute :author_mail, type: String
+  attribute :last_author, type: String
+  attribute :last_author_mail, type: String
   attribute :created_at, type: Date
   attribute :created_by, type: String
   attribute :created_by, type: String
@@ -19,8 +19,8 @@ class Feature
   validates :name,
             :description,
             :percentage,
-            :author,
-            :author_mail,
+            :last_author,
+            :last_author_mail,
             :created_at,
             :created_by,
             presence: true
@@ -71,8 +71,8 @@ class Feature
     feature_data = {
         history: self.history,
         description: self.description,
-        author: self.author,
-        author_mail: self.author_mail,
+        last_author: self.last_author,
+        last_author_mail: self.last_author_mail,
         created_at: self.created_at,
         created_by: self.created_by,
     }
@@ -93,7 +93,8 @@ class Feature
 
   def set_history_attribute
     self.history << {
-        author: self.author,
+        last_author: self.last_author,
+        last_author_mail: self.last_author_mail,
         percentage: self.percentage,
         updated_at: Time.current
     }

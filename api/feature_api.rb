@@ -60,8 +60,8 @@ class FeatureAPI < Grape::API
           name: feature_name,
           percentage: params[:percentage].to_i,
           description:  params[:description],
-          author: params[:author],
-          author_mail: params[:author_mail],
+          last_author: params[:author],
+          last_author_mail: params[:author_mail],
           created_at: Time.current,
           created_by: params[:author]
       }
@@ -79,7 +79,8 @@ class FeatureAPI < Grape::API
     end
 
     params do
-      requires :author, type: String, desc: 'The author name'
+      requires :last_author, type: String, desc: 'The author name'
+      requires :last_author_mail, type: String, desc: 'The author email'
       requires :feature_name, type: Feature
     end
     patch '/' do
@@ -88,8 +89,8 @@ class FeatureAPI < Grape::API
       options = {
           percentage: params[:percentage].to_i,
           description:  params[:description],
-          author: params[:author],
-          author_mail: params[:author_mail]
+          last_author: params[:last_author],
+          last_author_mail: params[:last_author_mail]
       }
 
       feature.assign_attributes(options)
