@@ -40,10 +40,13 @@ class FeatureAPI < Grape::API
       RestfulModels::Response.represent(data: { active: active })
     end
 
+    params do
+      requires :feature_name, type: Feature
+    end
     delete '/' do
       feature = params[:feature_name]
       feature.delete
-      RestfulModels::Response.represent(message: 'The feature has been removed.')
+      ''
     end
 
     params do
@@ -71,7 +74,10 @@ class FeatureAPI < Grape::API
       begin
         feature.save!
         Feature.set_users_to_feature(feature, params[:users])
-        RestfulModels::Response.represent(message: 'Feature created successfully!')
+        RestfulModels::Response.represent(
+            message: 'Feature created successfully!',
+            data: RestfulModels::Feature.represent(feature)
+        )
       rescue => e
         status 500
         RestfulModels::Response.represent(message: "An error has been occurred.\r\n #{e}")
@@ -98,7 +104,10 @@ class FeatureAPI < Grape::API
       begin
         feature.save!
         Feature.set_users_to_feature(feature, params[:users])
-        RestfulModels::Response.represent(message: 'Feature updated successfully!')
+        RestfulModels::Response.represent(
+            message: 'Feature updated successfully!',
+            data: RestfulModels::Feature.represent(feature)
+        )
       rescue => e
         status 500
         RestfulModels::Response.represent(message: "An error has been occurred.\r\n #{e}")

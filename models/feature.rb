@@ -12,7 +12,6 @@ class Feature
   attribute :last_author_mail, type: String
   attribute :created_at, type: Date
   attribute :created_by, type: String
-  attribute :created_by, type: String
   attribute :history, default: []
   attribute :users, default: []
 
@@ -57,9 +56,10 @@ class Feature
 
     current_active_users = rollout.users
     users_to_remove = current_active_users - users
-
     $rollout.deactivate_users(rollout.name ,users_to_remove)
     $rollout.activate_users(rollout.name ,users)
+    rollout.users = users
+    users
   end
 
   def save!
