@@ -96,7 +96,11 @@ class FeatureAPI < Grape::API
           percentage: params[:percentage].to_i,
           description:  params[:description],
           last_author: params[:last_author],
-          last_author_mail: params[:last_author_mail]
+          last_author_mail: params[:last_author_mail],
+
+          # This is a temporary, will be deleted after all the features will be updated/
+          created_by: params[:created_by],
+          created_at: Time.current
       }
 
       feature.assign_attributes(options)
