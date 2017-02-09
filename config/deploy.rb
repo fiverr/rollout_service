@@ -54,10 +54,6 @@ set :shared_paths, ['var', 'log', 'tracker']
 
 invoke :"deploy:force_unlock"
 
-if domain == 'rails3-staging-07'
-  set :rvm_path, "/usr/local/rvm/bin/rvm"
-end
-
 task :environment do
   invoke :"rvm:use[#{current_ruby!}@#{current_gemset!}]"
 end

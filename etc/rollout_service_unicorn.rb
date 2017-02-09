@@ -7,7 +7,7 @@ working_directory APP_ROOT
 listen 'unix://home/admin/apps/rollout_service/shared/pid/rollout_service.socket', backlog: 512
 listen 9876, tcp_nopush: true
 timeout 120
-pid "./pid/unicorn.pid"
+pid "../var/unicorn.pid"
 
 stderr_path "#{APP_ROOT}/log/unicorn-err.log"
 #stdout_path "#{APP_ROOT}/log/unicorn-out.log"
