@@ -78,8 +78,8 @@ end
 
 task :build_config_files => :environment do
   queue %[cd #{deploy_to}/current]
-  queue %[chmod g+rx,u+rwx "./script/build_config_files.sh"]
-  queue %[bash script/build_config_files.sh #{deploy_to}]
+  queue %[chmod g+rx,u+rwx "./etc/build_config_files.sh"]
+  queue %[bash etc/build_config_files.sh #{deploy_to}]
 end
 
 desc "Deploys the current version to the server."
@@ -91,7 +91,6 @@ task :deploy => :environment do
     invoke :'bundle:install'
     to :launch do
       invoke :build_config_files
-      invoke :'rails:assets_precompile'
       invoke :restart_app
     end
     invoke :'deploy:cleanup'
@@ -123,6 +122,6 @@ task :restart_app do
     queue %[cp ./deploy_aws/#{repository_name}_unicorn.rb config/#{repository_name}_unicorn.rb]
   end
   queue %[cd #{deploy_to}/current]
-  queue %[chmod g+rx,u+rwx "./script/control.sh"]
-  queue %[bash script/control.sh restart #{env}]
+  queue %[chmod g+rx,u+rwx "./etc/control.sh"]
+  queue %[bash etc/control.sh restart #{env}]
 end
