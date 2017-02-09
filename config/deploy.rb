@@ -4,10 +4,11 @@ require 'mina/git'
 require 'mina/rvm'
 require 'json'
 
+repository_name = 'rollout_service'
 
 set :user, 'admin'
-set :deploy_to, "/home/admin/apps/rollout_service"
-set :repository, "git@github.com:fiverr/rollout_service.git"
+set :deploy_to, "/home/admin/apps/#{repository_name}"
+set :repository, "git@github.com:fiverr/#{repository_name}.git"
 set :keep_releases, 10
 
 app_root = %x[pwd].strip
@@ -49,9 +50,13 @@ puts "App :: #{app}"
 set :versionsBack, ENV['versionsBack']
 puts "versionsBack :: #{versionsBack}"
 
-set :shared_paths, ['var', 'log', 'tracker', 'pid']
+set :shared_paths, ['var', 'log', 'tracker']
 
 invoke :"deploy:force_unlock"
+
+if domain == 'rails3-staging-07'
+  set :rvm_path, "/usr/local/rvm/bin/rvm"
+end
 
 task :environment do
   invoke :"rvm:use[#{current_ruby!}@#{current_gemset!}]"
@@ -60,8 +65,8 @@ end
 # Put any custom mkdir's in here for when `mina setup` is ran.
 task :setup  do
   shared_paths.each do |path|
-    queue! %[mkdir -p "/tmp/var/rollout_service/"]
-    queue! %[chmod a+rw "/tmp/var/rollout_service/"]
+    queue! %[mkdir -p "/tmp/var/#{repository_name}/"]
+    queue! %[chmod a+rw "/tmp/var/#{repository_name}/"]
 
     queue! %[mkdir -p "#{deploy_to}/shared/#{path}"]
     queue! %[chmod a+rw "#{deploy_to}/shared/#{path}"]
@@ -71,16 +76,10 @@ task :setup  do
   end
 end
 
-task :update_current_symlink => :environment do
-  queue %[echo -n "-----> updating current link for stats worker: "]
-  queue %[ls -ltr #{deploy_to}/current | awk '{print "ln -nsf", "#{deploy_to}/"$11"/rollout_service #{deploy_to}/current"}' | bash]
-  queue %[cd #{deploy_to}/current]
-end
-
 task :build_config_files => :environment do
   queue %[cd #{deploy_to}/current]
-  queue %[chmod g+rx,u+rwx "./etc/build_config_files.sh"]
-  queue %[bash etc/build_config_files.sh #{deploy_to}]
+  queue %[chmod g+rx,u+rwx "./script/build_config_files.sh"]
+  queue %[bash script/build_config_files.sh #{deploy_to}]
 end
 
 desc "Deploys the current version to the server."
@@ -88,17 +87,14 @@ task :deploy => :environment do
   deploy do
     invoke :setup
     invoke :'git:clone'
+    invoke :'deploy:link_shared_paths'
+    invoke :'bundle:install'
     to :launch do
-      invoke :'update_current_symlink'
-      in_directory "#{deploy_to}/current" do
-        invoke :'deploy:link_shared_paths'
-        invoke :'bundle:install'
-        invoke :build_config_files
-        invoke :restart_app
-        @commands[:default] = commands(@to)
-      end
-      invoke :'deploy:cleanup'
+      invoke :build_config_files
+      invoke :'rails:assets_precompile'
+      invoke :restart_app
     end
+    invoke :'deploy:cleanup'
   end
 end
 
@@ -121,6 +117,12 @@ end
 desc "Restarts app/worker from current location"
 task :restart_app do
   queue %[cd #{deploy_to}/current]
-  queue %[chmod g+rx,u+rwx "./etc/control.sh"]
-  queue %[./etc/control.sh restart #{env} ./etc/rollout_service_unicorn.rb]
+  #queue %[cp ./deploy_aws/config.ru service/config.ru]
+  #queue %[cp worker/#{repository_name}_worker.rb worker/config.ru]
+  if File.exist?("./deploy_aws/#{repository_name}_unicorn.rb")
+    queue %[cp ./deploy_aws/#{repository_name}_unicorn.rb config/#{repository_name}_unicorn.rb]
+  end
+  queue %[cd #{deploy_to}/current]
+  queue %[chmod g+rx,u+rwx "./script/control.sh"]
+  queue %[bash script/control.sh restart #{env}]
 end
