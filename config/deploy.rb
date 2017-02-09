@@ -60,8 +60,8 @@ end
 # Put any custom mkdir's in here for when `mina setup` is ran.
 task :setup  do
   shared_paths.each do |path|
-    queue! %[mkdir -p "/tmp/var/#{stats_worker_name}/"]
-    queue! %[chmod a+rw "/tmp/var/#{stats_worker_name}/"]
+    queue! %[mkdir -p "/tmp/var/rollout_service/"]
+    queue! %[chmod a+rw "/tmp/var/rollout_service/"]
 
     queue! %[mkdir -p "#{deploy_to}/shared/#{path}"]
     queue! %[chmod a+rw "#{deploy_to}/shared/#{path}"]
