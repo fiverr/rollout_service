@@ -10,4 +10,5 @@ group :default do
   gem 'require_all'
   gem 'activesupport', '~> 5.0'
   gem 'active_attr', '~> 0.9.0'
+  gem 'mina', '~> 0.3.7'
 end
