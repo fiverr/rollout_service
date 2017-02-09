@@ -4,7 +4,7 @@ puts "AppPath: #{APP_ROOT}"
 
 worker_processes 1
 working_directory APP_ROOT
-listen 'unix://home/admin/apps/rollout_service/shared/pid/rollout_service.socket', backlog: 512
+listen 'unix://home/admin/apps/rollout_service/shared/var/rollout_service.socket', backlog: 512
 listen 9876, tcp_nopush: true
 timeout 120
 pid "var/unicorn.pid"
