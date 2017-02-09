@@ -4,11 +4,10 @@ require 'mina/git'
 require 'mina/rvm'
 require 'json'
 
-stats_worker_name = 'rollout_service'
 
 set :user, 'admin'
-set :deploy_to, "/home/admin/apps/#{stats_worker_name}"
-set :repository, "git@github.com:fiverr/stats_workers.git"
+set :deploy_to, "/home/admin/apps/rollout_service"
+set :repository, "git@github.com:fiverr/rollout_service.git"
 set :keep_releases, 10
 
 app_root = %x[pwd].strip
@@ -72,9 +71,9 @@ task :setup  do
   end
 end
 
-task :update_current_symlink_stats_workers => :environment do
+task :update_current_symlink => :environment do
   queue %[echo -n "-----> updating current link for stats worker: "]
-  queue %[ls -ltr #{deploy_to}/current | awk '{print "ln -nsf", "#{deploy_to}/"$11"/#{stats_worker_name} #{deploy_to}/current"}' | bash]
+  queue %[ls -ltr #{deploy_to}/current | awk '{print "ln -nsf", "#{deploy_to}/"$11"/rollout_service #{deploy_to}/current"}' | bash]
   queue %[cd #{deploy_to}/current]
 end
 
@@ -90,7 +89,7 @@ task :deploy => :environment do
     invoke :setup
     invoke :'git:clone'
     to :launch do
-      invoke :'update_current_symlink_stats_workers'
+      invoke :'update_current_symlink'
       in_directory "#{deploy_to}/current" do
         invoke :'deploy:link_shared_paths'
         invoke :'bundle:install'
@@ -123,5 +122,5 @@ desc "Restarts app/worker from current location"
 task :restart_app do
   queue %[cd #{deploy_to}/current]
   queue %[chmod g+rx,u+rwx "./etc/control.sh"]
-  queue %[./etc/control.sh restart #{env} ./etc/#{stats_worker_name}_unicorn.rb]
+  queue %[./etc/control.sh restart #{env} ./etc/rollout_service_unicorn.rb]
 end
