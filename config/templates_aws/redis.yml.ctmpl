@@ -1,0 +1,7 @@
+development:
+  host: 127.0.0.1
+  port: 6379
+
+production:
+  host: '{{key_or_default "configurations/general/redis/users/host"  "redis-users"}}' # redis_users
+  port: '{{key_or_default "configurations/general/redis/users/port"  "6382"}}'

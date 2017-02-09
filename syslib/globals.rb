@@ -6,10 +6,7 @@ module Globals
   end
 
   def redis
-    config =  {
-        host: ENV['redis_host'] || '127.0.0.1',
-        port: ENV['redis_port'] || 6379
-    }
+    config =  YAML.load(File.read('./config/redis.yml'))[$env]
     $redis = Redis.new(config)
   end
 
