@@ -3,7 +3,7 @@
 
 This service expose RESTfull endpoints that allows you to perform CRUD operation on rollout gem.
 
-This service works great with [Rollout-Dashboard](https://github.com/fiverr/rollout_service) (a user interface for rollout gem) 
+This service works great with [Rollout-Dashboard](https://github.com/fiverr/rollout_dashboard) (a user interface for rollout gem) 
 
 # How to set redis configuration?
 Edit `./config/redis.yml`
