@@ -92,6 +92,9 @@ class Feature
   private
 
   def set_history_attribute
+    last_record = history.last
+    return if last_record.present? && last_record['percentage'] == self.percentage
+
     self.history << {
         last_author: self.last_author,
         last_author_mail: self.last_author_mail,

@@ -97,11 +97,11 @@ class FeatureAPI < Grape::API
           description:  params[:description],
           last_author: params[:last_author],
           last_author_mail: params[:last_author_mail],
-
-          # This is a temporary, will be deleted after all the features will be updated/
-          created_by: params[:created_by],
           created_at: Time.current
       }
+
+      # This is a temporary, will be deleted after all the features will be updated/
+      options[:created_by] = params[:created_by] if params[:created_by].present?
 
       feature.assign_attributes(options)
 
