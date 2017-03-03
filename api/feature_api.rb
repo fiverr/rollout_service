@@ -12,7 +12,6 @@ class FeatureAPI < Grape::API
 
 
   route_param :feature_name do
-
     params do
       requires :feature_name, type: Feature
     end
@@ -42,8 +41,10 @@ class FeatureAPI < Grape::API
 
     params do
       requires :feature_name, type: Feature
+      requires :id_token, type: String, desc: 'Google authentication id'
     end
     delete '/' do
+      authenticate!
       feature = params[:feature_name]
       feature.delete
       ''
@@ -51,11 +52,11 @@ class FeatureAPI < Grape::API
 
     params do
       requires :description, type: String, desc: 'The feature description'
-      requires :author, type: String, desc: 'The author name'
-      requires :author_mail, type: String, desc: 'The author mail'
+      requires :id_token, type: String, desc: 'Google authentication id'
       requires :feature_name, type: String
     end
     post '/' do
+      authenticate!
       feature_name = params[:feature_name]
       error! 'Feature is already exist!' if Feature.exist?(feature_name)
 
@@ -63,10 +64,10 @@ class FeatureAPI < Grape::API
           name: feature_name,
           percentage: params[:percentage].to_i,
           description:  params[:description],
-          last_author: params[:author],
-          last_author_mail: params[:author_mail],
+          last_author: params[:user_name],
+          last_author_mail: params[:user_mail],
           created_at: Time.current,
-          created_by: params[:author]
+          created_by: params[:user_name]
       }
 
       feature = Feature.new(options)
@@ -85,18 +86,18 @@ class FeatureAPI < Grape::API
     end
 
     params do
-      requires :last_author, type: String, desc: 'The author name'
-      requires :last_author_mail, type: String, desc: 'The author email'
       requires :feature_name, type: Feature
+      requires :id_token, type: String, desc: 'Google authentication id'
     end
     patch '/' do
+      authenticate!
       feature = params[:feature_name]
 
       options = {
           percentage: params[:percentage].to_i,
           description:  params[:description],
-          last_author: params[:last_author],
-          last_author_mail: params[:last_author_mail],
+          last_author: params[:user_name],
+          last_author_mail: params[:user_mail],
           created_at: Time.current
       }
 

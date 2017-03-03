@@ -8,6 +8,7 @@ group :default do
   gem 'rollout'
   gem 'redis'
   gem 'require_all'
+  gem 'httparty', '~> 0.13.7'
   gem 'activesupport', '~> 5.0'
   gem 'active_attr', '~> 0.9.0'
   gem 'mina', '~> 0.3.7'
