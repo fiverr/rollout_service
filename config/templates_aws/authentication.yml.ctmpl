@@ -1,0 +1,2 @@
+production:
+   google_oauth_allowed_domain: '{{ configurations/microservices/rollout/google-auth-allowed-domain }}'
