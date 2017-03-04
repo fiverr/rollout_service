@@ -13,7 +13,7 @@ module RolloutService
         raise 'Bad response from server' if response.code != 200
         response_body = JSON.parse(response.body)
 
-        if $google_oauth_allowed_domain.present? && response_body[:hd] != $google_oauth_allowed_domain
+        if $google_oauth_allowed_domain.present? && response_body['hd'] != $google_oauth_allowed_domain
           raise 'Unauthorized user, this domain is not allowed'
         end
 
