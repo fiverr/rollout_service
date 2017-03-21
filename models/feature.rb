@@ -8,20 +8,18 @@ class Feature
   attribute :name, type: String
   attribute :description, type: String
   attribute :percentage, type: Integer, default: 0
-  attribute :last_author, type: String
-  attribute :last_author_mail, type: String
+  attribute :author, type: String
+  attribute :author_mail, type: String
   attribute :created_at, type: Date
-  attribute :created_by, type: String
   attribute :history, default: []
   attribute :users, default: []
 
   validates :name,
             :description,
             :percentage,
-            :last_author,
-            :last_author_mail,
             :created_at,
-            :created_by,
+            :author,
+            :author_mail,
             presence: true
 
   def self.parse(name)
@@ -34,14 +32,27 @@ class Feature
     return nil unless exist?(name)
 
     feature = $rollout.get(name)
-    feature_data = feature.data.symbolize_keys!
-    feature_data.delete_if {|key, _| !self.method_defined?(key)}
+    feature_data = feature.data.deep_symbolize_keys!
 
     feature_data.merge!({
      name: feature.name,
      percentage: feature.percentage,
      users: feature.users
     })
+
+    feature_data[:author] = feature_data[:last_author] if feature_data[:author].blank?
+    feature_data[:author_mail] = feature_data[:last_author_mail] if feature_data[:author_mail].blank?
+
+    if feature_data[:history].present?
+      feature_data[:history] = feature_data[:history].map do |record|
+        record[:author] = record[:last_author] if record[:author].blank?
+        record[:author_mail] = record[:last_author_mail] if record[:author_mail].blank?
+        record
+      end
+    end
+
+    feature_data.delete_if {|key, _| !self.method_defined?(key)}
+
     self.new(feature_data)
   end
 
@@ -63,6 +74,8 @@ class Feature
   end
 
   def save!
+    return unless $current_user.present?
+
     set_history_attribute
     raise 'Feature is not valid!' unless self.valid?
 
@@ -71,10 +84,9 @@ class Feature
     feature_data = {
         history: self.history,
         description: self.description,
-        last_author: self.last_author,
-        last_author_mail: self.last_author_mail,
-        created_at: self.created_at,
-        created_by: self.created_by,
+        author: self.author,
+        author_mail: self.author_mail,
+        created_at: self.created_at
     }
 
     feature_data.delete_if { |_, value| value.blank? }
@@ -93,11 +105,11 @@ class Feature
 
   def set_history_attribute
     last_record = history.last
-    return if last_record.present? && last_record['percentage'] == self.percentage
+    return if last_record.present? && last_record[:percentage] == self.percentage
 
     self.history << {
-        last_author: self.last_author,
-        last_author_mail: self.last_author_mail,
+        author: $current_user.name,
+        author_mail: $current_user.mail,
         percentage: self.percentage,
         updated_at: Time.current
     }

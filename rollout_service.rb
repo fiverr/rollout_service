@@ -4,6 +4,7 @@ module RolloutService
     format :json
     prefix :api
 
+    User = Struct.new(:name, :mail)
 
     helpers do
       def authenticate!
@@ -17,8 +18,10 @@ module RolloutService
           raise 'Unauthorized user, this domain is not allowed'
         end
 
-        params[:user_mail] = response_body['email']
-        params[:user_name] = response_body['name']
+
+        $current_user = User.new(response_body['name'], response_body['email'])
+        raise 'Unauthorized user' if $current_user.name.blank? || $current_user.mail.blank?
+
       rescue => e
         error!('401 Unauthorized', 401)
       end
