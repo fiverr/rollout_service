@@ -28,5 +28,10 @@ This service works great with [Rollout-Dashboard](https://github.com/fiverr/roll
 Add the `REDIS_URL` environment variable. On *nix systems you can do the following:
 `export REDIS_URL="redis://username:password@redis.url:port"`
 
+# How to limit google authentication to a single domain?
+
+Add the `GOOGLE_OAUTH_ALLOWED_DOMAIN` environment variable. On *nix systems you can do the following:
+`export GOOGLE_OAUTH_ALLOWED_DOMAIN="fiverr.com"`
+
 ## How to start the service?
 run `bundle exec rackup -p :port`
