@@ -24,7 +24,9 @@ This service works great with [Rollout-Dashboard](https://github.com/fiverr/roll
 # FAQ
 
 # How to set redis configuration?
-Edit `./config/redis.yml`
+
+Add the `REDIS_URL` environment variable. On *nix systems you can do the following:
+`export REDIS_URL="redis://username:password@redis.url:port"`
 
 ## How to start the service?
 run `bundle exec rackup -p :port`
