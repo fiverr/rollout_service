@@ -6,7 +6,7 @@ module Globals
   end
 
   def redis
-    if ENV['REDIS_URL'].is_nil?
+    if ENV['REDIS_URL'].nil?
       config = YAML.load(File.read('./config/redis.yml'))[$env]
       $redis = Redis.new(config)
     else
