@@ -23,34 +23,34 @@ This service works great with [Rollout-Dashboard](https://github.com/fiverr/roll
 
 # FAQ
 
-# Configuring through the environment
+### Configuring through the environment
 
-## How to configure redis?
+#### How to configure redis?
 
 Add the `REDIS_URL` environment variable. On *nix systems you can do the following:
 `export REDIS_URL="redis://username:password@redis.url:port"`
 
-## How to limit google authentication to a single domain?
+#### How to limit google authentication to a single domain?
 
 Add the `GOOGLE_OAUTH_ALLOWED_DOMAIN` environment variable. On *nix systems you can do the following:
 `export GOOGLE_OAUTH_ALLOWED_DOMAIN="fiverr.com"`
 
-# Configuring through yaml files
+### Configuring through yaml files
 
-## How to configure redis?
+#### How to configure redis?
 
 Edit `./config/redis.yml`
 
-## How to limit google authentication to a single domain?
+#### How to limit google authentication to a single domain?
 
 Edit `./config/authentication.yml`
 
-# Running the service
+### Running the service
 
-## Heroku
+#### Heroku
 
 The Procfile will manage this for you.
 
-## Elsewhere
+#### Elsewhere
 
 run `bundle exec rackup -p :port`
