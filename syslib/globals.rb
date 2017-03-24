@@ -6,8 +6,12 @@ module Globals
   end
 
   def redis
-    if
-    $redis = Redis.new(url: ENV['REDIS_URL'])
+    if ENV['REDIS_URL'].is_nil?
+      config = YAML.load(File.read('./config/redis.yml'))[$env]
+      $redis = Redis.new(config)
+    else
+      $redis = Redis.new(url: ENV['REDIS_URL'])
+    end
   end
 
   def rollout
