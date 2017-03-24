@@ -6,6 +6,7 @@ module Globals
   end
 
   def redis
+    if
     $redis = Redis.new(url: ENV['REDIS_URL'])
   end
 
@@ -14,7 +15,10 @@ module Globals
   end
 
   def authentication
-    $google_oauth_allowed_domain = ENV['GOOGLE_OAUTH_ALLOWED_DOMAIN']
+    config = YAML.load(File.read('./config/authentication.yml'))[$env]
+    $google_oauth_allowed_domain =
+      ENV['GOOGLE_OAUTH_ALLOWED_DOMAIN'] ||
+      config[:google_oauth_allowed_domain]
   end
 
   def setup
