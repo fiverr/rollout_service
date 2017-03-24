@@ -13,7 +13,7 @@
     "env": {
         "GOOGLE_OAUTH_ALLOWED_DOMAIN": {
             "description": "The domain to limit google authentication with.",
-            "value": "@fiverr.com"
+            "value": "fiverr.com"
         }
     }
 }
