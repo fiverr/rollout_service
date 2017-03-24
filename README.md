@@ -3,7 +3,11 @@
 
 This service expose RESTfull endpoints that allows you to perform CRUD operation on [rollout](https://github.com/fetlife/rollout) gem.
 
-This service works great with [Rollout-Dashboard](https://github.com/fiverr/rollout_dashboard) - a beautiful user interface for rollout gem) 
+This service works great with [Rollout-Dashboard](https://github.com/fiverr/rollout_dashboard) - a beautiful user interface for rollout gem)
+
+## Deploy
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 ## End-Points Documentation:
 
@@ -17,11 +21,10 @@ This service works great with [Rollout-Dashboard](https://github.com/fiverr/roll
 | Partially update existing feature  | PATCH /api/v1/features/:feature_name  |
 | Delete a feature  | DELETE /api/v1/features/:feature_name  |
 
-
 # FAQ
 
 # How to set redis configuration?
 Edit `./config/redis.yml`
 
-## How to start the service? 
+## How to start the service?
 run `bundle exec rackup -p :port`

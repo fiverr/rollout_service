@@ -6,8 +6,7 @@ module Globals
   end
 
   def redis
-    config =  YAML.load(File.read('./config/redis.yml'))[$env]
-    $redis = Redis.new(config)
+    $redis = Redis.new(url: ENV['REDIS_URL'])
   end
 
   def rollout
@@ -15,8 +14,7 @@ module Globals
   end
 
   def authentication
-    config =  YAML.load(File.read('./config/authentication.yml'))[$env]
-    $google_oauth_allowed_domain = config[:google_oauth_allowed_domain]
+    $google_oauth_allowed_domain = ENV['GOOGLE_OAUTH_ALLOWED_DOMAIN']
   end
 
   def setup
