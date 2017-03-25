@@ -33,9 +33,9 @@ class FeatureAPI < Grape::API
       user_id = params[:user_id].to_i
       feature = params[:feature_name]
 
-      active = feature.active?(user_id: user_id)
+      is_active = feature.active?(user_id)
 
-      RestfulModels::Response.represent(data: { active: active })
+      RestfulModels::Response.represent(data: { active: is_active })
     end
 
     params do
