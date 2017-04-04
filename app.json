@@ -1,0 +1,19 @@
+{
+    "name": "Rollout Service",
+    "description": "A Grape service that expose rollout gem via RESTful endpoints",
+    "repository": "https://github.com/fiverr/rollout_service",
+    "keywords": [
+        "feature flag",
+        "rollout",
+        "rollout api"
+    ],
+    "addons": [
+        "heroku-redis:hobby-dev"
+    ],
+    "env": {
+        "GOOGLE_OAUTH_ALLOWED_DOMAIN": {
+            "description": "The domain to limit google authentication with.",
+            "value": "fiverr.com"
+        }
+    }
+}
