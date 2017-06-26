@@ -73,6 +73,7 @@ class FeatureAPI < Grape::API
       begin
         feature.save!
         Feature.set_users_to_feature(feature, params[:users])
+        Feature.set_groups_to_feature(feature, params[:groups])
         RestfulModels::Response.represent(
             message: 'Feature created successfully!',
             data: feature
@@ -108,6 +109,7 @@ class FeatureAPI < Grape::API
       begin
         feature.save!
         Feature.set_users_to_feature(feature, params[:users])
+        Feature.set_groups_to_feature(feature, params[:groups])
         RestfulModels::Response.represent(
             message: 'Feature updated successfully!',
             data: feature
