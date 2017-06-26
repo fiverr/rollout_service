@@ -24,4 +24,4 @@ This service works great with [Rollout-Dashboard](https://github.com/fiverr/roll
 Edit `./config/redis.yml`
 
 ## How to start the service? 
-run `bundle exec rackup -p :port`
+run `REDIS_URL="redis://localhost:6379" bundle exec rackup -p :port`
