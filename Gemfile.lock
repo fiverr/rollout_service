@@ -34,6 +34,8 @@ GEM
       virtus (>= 1.0.0)
     grape-entity (0.5.2)
       multi_json (>= 1.3.2)
+    grape-swagger (0.27.2)
+      grape (>= 0.16.2)
     hashie (3.4.6)
     httparty (0.13.7)
       json (~> 1.8)
@@ -83,6 +85,7 @@ DEPENDENCIES
   activesupport (~> 5.0)
   grape
   grape-entity (~> 0.5.0)
+  grape-swagger
   httparty (~> 0.13.7)
   mina (~> 0.3.7)
   rack-cors
@@ -92,4 +95,4 @@ DEPENDENCIES
   unicorn (~> 5.1)
 
 BUNDLED WITH
-   1.12.5
+   1.13.6
