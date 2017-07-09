@@ -27,12 +27,12 @@ This service works great with [Rollout-Dashboard](https://github.com/fiverr/roll
 Edit `./config/redis.yml`
 
 ## How to start the service? 
-
 1. Make sure redis is running. 
 
    For dev environment you can run the command `redis-server`
 
-2. Run `bundle exec rackup -p :port`
+2. Run `ALLOWED_EMAILS="user1@gmail.com,user2@gmail.com" bundle exec rackup -p 4000`
+Specify proper ALLOWED_EMAILS and service port. In this example the service will listen on port 4000.
 
 ## Authentication
 
