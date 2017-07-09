@@ -13,6 +13,7 @@ class Feature
   attribute :created_at, type: Date
   attribute :history, default: []
   attribute :users, default: []
+  attribute :groups, default: []
 
   validates :name,
             :description,
@@ -37,7 +38,8 @@ class Feature
     feature_data.merge!({
      name: feature.name,
      percentage: feature.percentage,
-     users: feature.users
+     users: feature.users,
+     groups: feature.groups
     })
 
     feature_data[:author] = feature_data[:last_author] if feature_data[:author].blank?
@@ -71,6 +73,18 @@ class Feature
     $rollout.activate_users(rollout.name ,users)
     rollout.users = users
     users
+  end
+
+  def self.set_groups_to_feature(rollout_feature, groups)
+    return if groups.nil? || rollout_feature.nil?
+    groups = groups.to_a
+
+    current_active_groups = rollout_feature.groups
+    groups_to_remove = current_active_groups - groups
+    groups_to_remove.each { |g| $rollout.deactivate_group(rollout_feature.name ,g) }
+    groups.each { |g| $rollout.activate_group(rollout_feature.name ,g) }
+    rollout_feature.groups = groups
+    groups
   end
 
   def save!
