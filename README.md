@@ -7,6 +7,9 @@ This service works great with [Rollout-Dashboard](https://github.com/fiverr/roll
 
 ## End-Points Documentation:
 
+### Go to `http://127.0.0.1/api/v1/docs` for auto generated swagger documentation.
+
+### Routes Table
 | Description   | END POINT     |
 | ------------- | ------------- |
 | Get all features  | GET /api/v1/features  |
@@ -20,8 +23,23 @@ This service works great with [Rollout-Dashboard](https://github.com/fiverr/roll
 
 # FAQ
 
-# How to set redis configuration?
+## How to set redis configuration?
 Edit `./config/redis.yml`
 
 ## How to start the service? 
-run `bundle exec rackup -p :port`
+
+1. Make sure redis is running. 
+
+   For dev environment you can run the command `redis-server`
+
+2. Run `bundle exec rackup -p :port`
+
+## Authentication
+
+For write operations, the service accept a google oauth token id and validates it.
+
+Besides the token validation, you can also restrict the access to an allowed domain (see `config/authentication.yml`). 
+
+That means that you'll need to authenticate the user before making any write requests. 
+
+Note: The client side authentication already implemented in [Rollout-Dashboard](https://github.com/fiverr/rollout_dashboard)
