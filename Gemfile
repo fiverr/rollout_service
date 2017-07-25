@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+ruby '2.4.1'
 
 group :default do
   gem 'unicorn', '~> 5.1'
