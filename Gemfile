@@ -13,4 +13,5 @@ group :default do
   gem 'activesupport', '~> 5.0'
   gem 'active_attr', '~> 0.9.0'
   gem 'mina', '~> 0.3.7'
+  gem 'grape-swagger'
 end
