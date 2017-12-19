@@ -21,7 +21,7 @@ module GoogleAuthentication
     def validate_mail!(response_body)
         raise 'Unauthorized user, this domain is not allowed' if $google_oauth_allowed_domain.present? && response_body['hd'] != $google_oauth_allowed_domain
 
-        allowed = (ENV['ALLOWED_EMAILS'] || '').split(',')
+        allowed = $allowed_users_emails
         raise `User #{response_body['email']} is not from the allowed list` if !allowed.empty? && !allowed.include?(response_body['email'])
     end
 end

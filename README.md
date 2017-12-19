@@ -31,8 +31,10 @@ Edit `./config/redis.yml`
 
    For dev environment you can run the command `redis-server`
 
-2. Run `ALLOWED_EMAILS="user1@gmail.com,user2@gmail.com" bundle exec rackup -p 4000`
-Specify proper ALLOWED_EMAILS and service port. In this example the service will listen on port 4000.
+2. Run `ALLOWED_USERS_EMAILS="user1@gmail.com,user2@gmail.com" bundle exec rackup -p 4000`
+Specify proper ALLOWED_USERS_EMAILS and service port. In this example the service will listen on port 4000.
+The ALLOWED_USERS_EMAILS env var sets the list of users allowed to use the service via comma-separated list. 
+If it's not specified any Google user will be allowed unless you configure domain filter via authentication.yml.
 
 ## Authentication
 
