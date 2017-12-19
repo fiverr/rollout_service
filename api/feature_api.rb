@@ -1,6 +1,7 @@
 class FeatureAPI < Grape::API
 
   get '/' do
+    authenticate!
     features = $rollout.features
     features.map! do|feature|
       Feature.find(feature)
