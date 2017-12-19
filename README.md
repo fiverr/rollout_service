@@ -32,16 +32,18 @@ Edit `./config/redis.yml`
    For dev environment you can run the command `redis-server`
 
 2. Run `ALLOWED_USERS_EMAILS="user1@gmail.com,user2@gmail.com" bundle exec rackup -p 4000`
-Specify proper ALLOWED_USERS_EMAILS and service port. In this example the service will listen on port 4000.
-The ALLOWED_USERS_EMAILS env var sets the list of users allowed to use the service via comma-separated list. 
-If it's not specified any Google user will be allowed unless you configure domain filter via authentication.yml.
+
+Specify proper service port and ALLOWED_USERS_EMAILS (or omit it). In this example the service will listen on port 4000.
 
 ## Authentication
 
 For write operations, the service accept a google oauth token id and validates it.
 
-Besides the token validation, you can also restrict the access to an allowed domain (see `config/authentication.yml`). 
-
 That means that you'll need to authenticate the user before making any write requests. 
+
+Also, for both read and write operations you can restrict the service with following:
+* an allowed domain (see `config/authentication.yml`)
+* you can configure the list of users allowed to use the service via comma-separated list in ALLOWED_USERS_EMAILS env var. 
+If it's not specified any Google user will be allowed.
 
 Note: The client side authentication already implemented in [Rollout-Dashboard](https://github.com/fiverr/rollout_dashboard)
