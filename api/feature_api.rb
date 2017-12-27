@@ -1,106 +1,110 @@
-class FeatureAPI < Grape::API
+module RolloutService
+  module Api
+    class Features < Grape::API
 
-  get '/' do
-    features = $rollout.features
-    features.map! do|feature|
-      Feature.find(feature)
-    end
+      get '/' do
+        features = $rollout.features
+        features.map! do|feature|
+          Feature.find(feature)
+        end
 
-    {data: features}
-  end
-
-  route_param :feature_name do
-    params do
-      requires :feature_name, type: Feature
-    end
-    get '/' do
-      feature = params[:feature_name]
-
-      if feature.valid?
-        {data: feature}
-      else
-        status 500
-        {message: 'Error, feature is not valid'}
+        {data: features}
       end
-    end
 
-    params do
-      requires :user_id, type: Integer, desc: 'The user ID'
-      requires :feature_name, type: Feature
-    end
-    get '/:user_id/active' do
-      user_id = params[:user_id].to_i
-      feature = params[:feature_name]
+      route_param :feature_name do
+        params do
+          requires :feature_name, type: Models::Feature
+        end
+        get '/' do
+          feature = params[:feature_name]
 
-      is_active = feature.active?(user_id)
+          if feature.valid?
+            {data: feature}
+          else
+            status 500
+            {message: 'Error, feature is not valid'}
+          end
+        end
 
-      {data: { active: is_active }}
-    end
+        params do
+          requires :user_id, type: Integer, desc: 'The user ID'
+          requires :feature_name, type: Models::Feature
+        end
+        get '/:user_id/active' do
+          user_id = params[:user_id].to_i
+          feature = params[:feature_name]
 
-    params do
-      requires :feature_name, type: Feature
-      requires :id_token, type: String, desc: 'Google authentication id'
-    end
-    delete '/' do
-      authenticate!
-      feature = params[:feature_name]
-      feature.delete
-    end
+          is_active = feature.active?(user_id)
 
-    params do
-      requires :description, type: String, desc: 'The feature description'
-      requires :id_token, type: String, desc: 'Google authentication id'
-      requires :feature_name, type: String
-    end
-    post '/' do
-      authenticate!
-      feature_name = params[:feature_name]
-      error! 'Feature is already exist!' if Feature.exist?(feature_name)
+          {data: { active: is_active }}
+        end
 
-      options = {
-          name: feature_name,
-          percentage: params[:percentage].to_i,
-          description:  params[:description],
-          author: $current_user.name,
-          author_mail:  $current_user.mail,
-          created_at: Time.current
-      }
+        params do
+          requires :feature_name, type: Models::Feature
+          requires :id_token, type: String, desc: 'Google authentication id'
+        end
+        delete '/' do
+          authenticate!
+          feature = params[:feature_name]
+          feature.delete
+        end
 
-      feature = Feature.new(options)
+        params do
+          requires :description, type: String, desc: 'The feature description'
+          requires :id_token, type: String, desc: 'Google authentication id'
+          requires :feature_name, type: String
+        end
+        post '/' do
+          authenticate!
+          feature_name = params[:feature_name]
+          error! 'Feature is already exist!' if Models::Feature.exist?(feature_name)
 
-      begin
-        feature.save!
-        Feature.set_users_to_feature(feature, params[:users])
-        { message: 'Feature created successfully!', data: feature}
-      rescue => e
-        status 500
-        {message: "An error has been occurred.\r\n #{e}"}
-      end
-    end
+          options = {
+              name: feature_name,
+              percentage: params[:percentage].to_i,
+              description:  params[:description],
+              author: $current_user.name,
+              author_mail:  $current_user.mail,
+              created_at: Time.current
+          }
 
-    params do
-      requires :feature_name, type: Feature
-      requires :id_token, type: String, desc: 'Google authentication id'
-    end
-    patch '/' do
-      authenticate!
-      feature = params[:feature_name]
+          feature = Feature.new(options)
 
-      options = {
-          percentage: params[:percentage].to_i,
-          description:  params[:description],
-          created_at: Time.current
-      }
+          begin
+            feature.save!
+            Feature.set_users_to_feature(feature, params[:users])
+            { message: 'Feature created successfully!', data: feature}
+          rescue => e
+            status 500
+            {message: "An error has been occurred.\r\n #{e}"}
+          end
+        end
 
-      feature.assign_attributes(options)
+        params do
+          requires :feature_name, type: Models::Feature
+          requires :id_token, type: String, desc: 'Google authentication id'
+        end
+        patch '/' do
+          authenticate!
+          feature = params[:feature_name]
 
-      begin
-        feature.save!
-        Feature.set_users_to_feature(feature, params[:users])
-        { data: feature}
-      rescue => e
-        status 500
-        {message: "An error has been occurred.\r\n #{e}"}
+          options = {
+              percentage: params[:percentage].to_i,
+              description:  params[:description],
+              created_at: Time.current
+          }
+
+          feature.assign_attributes(options)
+
+          begin
+            feature.save!
+            Feature.set_users_to_feature(feature, params[:users])
+            { data: feature}
+          rescue => e
+            status 500
+            {message: "An error has been occurred.\r\n #{e}"}
+          end
+        end
       end
     end
   end
