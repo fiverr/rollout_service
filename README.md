@@ -9,12 +9,11 @@ This service works great with [Rollout-Dashboard](https://github.com/fiverr/roll
 
 ### Go to `http://127.0.0.1/api/v1/docs` for auto generated swagger documentation.
 
-### Routes Table
+### Routes
 | Description   | END POINT     |
 | ------------- | ------------- |
-| Get all features  | GET /api/v1/features  |
-| Get specific feature by name  | GET /api/v1/features/:feature_name  |
-| Get specific feature by name  | GET /api/v1/features/:feature_name  |
+| All features  | GET /api/v1/features  |
+| Specific feature by name  | GET /api/v1/features/:feature_name  |
 | Check if feature is active  | GET /api/v1/features/:feature_name/:user_id/active  |
 | Create a new feature  | POST /api/v1/features/:feature_name  |
 | Partially update existing feature  | PATCH /api/v1/features/:feature_name  |
@@ -36,7 +35,7 @@ Edit `./config/redis.yml`
 
 ## Authentication
 
-For write operations, the service accept a google oauth token id and validates it.
+For write operations, the service accept a Google oauth token id and validates it.
 
 Besides the token validation, you can also restrict the access to an allowed domain (see `config/authentication.yml`). 
 
