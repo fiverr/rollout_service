@@ -18,4 +18,4 @@ end
 
 HTTParty::Basement.default_options.update(verify: false) if $env == 'development'
 
-run RolloutService::API
+run RolloutService::Entry
