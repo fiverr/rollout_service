@@ -35,24 +35,13 @@ module RolloutService
         feature_data = feature.data.deep_symbolize_keys!
 
         feature_data.merge!({
-                                name: feature.name,
-                                percentage: feature.percentage,
-                                users: feature.users
-                            })
-
-        feature_data[:author] = feature_data[:last_author] if feature_data[:author].blank?
-        feature_data[:author_mail] = feature_data[:last_author_mail] if feature_data[:author_mail].blank?
-
-        if feature_data[:history].present?
-          feature_data[:history] = feature_data[:history].map do |record|
-            record[:author] = record[:last_author] if record[:author].blank?
-            record[:author_mail] = record[:last_author_mail] if record[:author_mail].blank?
-            record
-          end
-        end
+          name: feature.name,
+          percentage: feature.percentage,
+          users: feature.users
+        })
 
         feature_data.delete_if {|key, _| !self.method_defined?(key)}
-
+        
         self.new(feature_data)
       end
 
