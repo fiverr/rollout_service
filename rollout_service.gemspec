@@ -19,7 +19,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'grape', '~> 1'
   spec.add_dependency 'grape-entity', '~> 0.5'
   spec.add_dependency 'rollout', '~> 2.4'
-  spec.add_dependency 'redis',  '~> 4'
   spec.add_dependency 'require_all', '~> 2'
   spec.add_dependency 'activesupport', '~> 5'
   spec.add_dependency 'active_attr', '~> 0.9'
