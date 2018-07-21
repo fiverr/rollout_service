@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = RolloutService::VERSION
   spec.authors       = ["Fiverr"]
   spec.email         = ["dev@fiverr.com"]
-  spec.summary       = "This gem exposes rollout gem API"
+  spec.summary       = "Rack app that exposes rollout gem API via RESTful endpoints"
   spec.homepage      = "https://www.fiverr.com"
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
