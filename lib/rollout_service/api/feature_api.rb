@@ -18,13 +18,8 @@ module RolloutService
         end
         get '/' do
           feature = params[:feature_name]
-
-          if feature.valid?
-            RestfulModels::Response.represent(data: feature)
-          else
-            status 500
-            RestfulModels::Response.represent(message: 'Error, feature is not valid')
-          end
+          
+          RestfulModels::Response.represent(data: feature)
         end
 
         params do
